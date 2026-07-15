@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Plan Atac">
+<meta name="theme-color" content="#14171a">
+<title>Centru de Comandă Financiar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14171a;
+    --bg-card: #1e2226;
+    --bg-card-2: #23282d;
+    --border: #2c3136;
+    --text: #EDEAE3;
+    --text-dim: #9BA3AA;
+    --text-faint: #6b7278;
+    --gold: #F4A802;
+    --teal: #0a7a6a;
+    --teal-deep: #01574c;
+    --danger: #C1443C;
+    --success: #4F8F6B;
+    --success-bg: #17251c;
+    --success-border: #2f5c3f;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(244,168,2,0.06), transparent 40%),
+      radial-gradient(circle at 100% 30%, rgba(1,87,76,0.15), transparent 45%);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 32px 20px 80px;
+  }
+  .wrap{ max-width: 760px; margin: 0 auto; }
+
+  header{ margin-bottom: 22px; display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+  .header-text{ flex:1; min-width:220px; }
+  .header-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .eyebrow{
+    font-family:'Oswald', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  h1{
+    font-family:'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: clamp(26px, 5vw, 34px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.05;
+  }
+  .subtitle{
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 8px;
+    max-width: 520px;
+  }
+  .export-btn{
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family:'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .export-btn:hover{ border-color: var(--gold); color: var(--gold); }
+
+  .tabs{ display:flex; gap:10px; margin: 8px 0 26px; }
+  .tab-btn{
+    flex:1;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family:'Oswald', sans-serif;
+    font-size: 12.5px;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 14px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active{
+    background: linear-gradient(155deg, var(--teal-deep), var(--teal));
+    color: #eafff9;
+    border-color: var(--teal);
+  }
+  .tab-btn:not(.active):hover{ border-color: var(--gold); color: var(--gold); }
+
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; animation: rise 0.3s ease-out; }
+
+  .list-label{
+    font-family:'Oswald', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 22px 0 12px 4px;
+  }
+  .list-label:first-of-type{ margin-top: 6px; }
+  .list-label.gold-label{ color: var(--gold); }
+
+  .overview{
+    background: linear-gradient(155deg, var(--bg-card), var(--bg-card-2));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px 20px;
+    margin: 0 0 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .overview::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background: linear-gradient(90deg, var(--teal-deep), var(--gold));
+  }
+  .overview-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .stat-label{
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-faint);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .stat-value{
+    font-family:'Oswald', sans-serif;
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-value.gold{ color: var(--gold); }
+  .stat-value.success{ color: var(--success); }
+  .stat-value.danger-text{ color: var(--danger); }
+
+  .progress-outer{
+    width:100%; height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
+  }
+  .progress-inner{
+    height:100%;
+    background: linear-gradient(90deg, var(--teal-deep), var(--teal), var(--gold));
+    border-radius: 6px; width:0%;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-caption{
+    display:flex; justify-content:space-between;
+    font-size: 11px; color: var(--text-faint);
+    margin-top: 6px; letter-spacing: 0.3px;
+  }
+
+  /* LINKED SOLD BOX */
+  .linked-box{
+    background: var(--bg-card);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .linked-box-text{ font-size:12.5px; color: var(--text-dim); }
+  .linked-box-text b{ color: var(--gold); font-variant-numeric: tabular-nums; }
+  .linked-box button{
+    background: var(--teal); color:#eafff9; border:none; border-radius:8px;
+    padding: 8px 14px; font-family:'Oswald', sans-serif; font-size:11.5px;
+    letter-spacing:1px; text-transform:uppercase; font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  .linked-box button:hover{ filter:brightness(1.1); }
+
+  /* ALLOCATION CALCULATOR */
+  .calc-panel{
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .calc-title{
+    font-family:'Oswald', sans-serif;
+    font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 4px; font-weight: 600;
+  }
+  .calc-sub{ font-size: 12px; color: var(--text-faint); margin-bottom: 14px; }
+  .calc-row{ display:flex; gap:10px; margin-bottom: 14px; }
+  .calc-row input{ flex:1; }
+  .calc-row button{ flex-shrink:0; }
+  .calc-results{ display:flex; flex-direction:column; gap:8px; margin-top: 4px; }
+  .calc-item{
+    display:flex; justify-content:space-between; align-items:center;
+    background: var(--bg); border:1px solid var(--border); border-radius:8px;
+    padding: 10px 12px; font-size: 13px;
+  }
+  .calc-item.priority{ border-color: var(--gold); }
+  .calc-item-name{ display:flex; align-items:center; gap:8px; }
+  .calc-item-tag{
+    font-family:'Oswald', sans-serif; font-size: 9.5px; letter-spacing: 1px;
+    text-transform:uppercase; color:#1a1400; background: var(--gold);
+    padding: 2px 6px; border-radius: 4px; font-weight:700;
+  }
+  .calc-item-amount{ font-variant-numeric: tabular-nums; font-weight:600; }
+  .calc-warning{
+    font-size: 12px; color: var(--danger); margin-top: 6px;
+  }
+  .calc-apply{ margin-top: 14px; width:100%; }
+  .calc-empty{ color: var(--text-faint); font-size:12.5px; }
+
+  .add-toggle{
+    width:100%;
+    background: var(--bg-card);
+    border: 1px dashed var(--border);
+    color: var(--text-dim);
+    border-radius: 12px;
+    padding: 14px;
+    font-family:'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 24px;
+  }
+  .add-toggle:hover{ border-color: var(--gold); color: var(--gold); }
+
+  .add-form{
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+    display:none;
+  }
+  .add-form.open{ display:block; }
+  .add-form-title{
+    font-family:'Oswald', sans-serif;
+    font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 14px; font-weight: 600;
+  }
+  .form-row{ display:grid; grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 10px; margin-bottom: 12px; }
+  @media (max-width: 640px){ .form-row{ grid-template-columns: 1fr 1fr; } }
+  label{
+    display:block; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-faint); margin-bottom: 5px; font-weight: 600;
+  }
+  input[type="text"], input[type="number"], select{
+    width:100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-family:'Inter', sans-serif;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  select{ cursor:pointer; }
+  input:focus, select:focus{ outline: none; border-color: var(--gold); }
+  .form-actions{ display:flex; gap: 10px; margin-top: 4px; }
+  .checkbox-row{ display:flex; align-items:center; gap:8px; margin-top: 4px; }
+  .checkbox-row input[type="checkbox"]{ width:15px; height:15px; accent-color: var(--gold); }
+  .checkbox-row label{ margin:0; text-transform:none; letter-spacing:0; font-size:12.5px; color: var(--text-dim); font-weight:500; cursor:pointer; }
+
+  .btn{
+    font-family:'Oswald', sans-serif;
+    font-size: 12.5px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
+    padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-primary{ background: var(--gold); color: #1a1400; }
+  .btn-primary:hover{ filter: brightness(1.08); }
+  .btn-ghost{ background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+  .btn-ghost:hover{ color: var(--text); border-color: var(--text-faint); }
+
+  .debt-list{ display:flex; flex-direction:column; gap: 12px; }
+
+  .card{
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 18px 16px;
+    position: relative;
+    transition: background 0.4s, border-color 0.4s, opacity 0.4s;
+    animation: rise 0.35s ease-out;
+  }
+  @keyframes rise{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform: translateY(0);} }
+  .card.type-persoana{ border-left-color: var(--gold); }
+  .card.type-institutie{ border-left-color: var(--teal); }
+  .card.done{ background: var(--success-bg); border-color: var(--success-border); border-left-color: var(--success); }
+
+  .card-top{ display:flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .target-tag{
+    font-family:'Oswald', sans-serif; font-size: 10.5px; letter-spacing: 1.5px;
+    color: var(--text-faint); font-weight: 600; margin-bottom: 3px;
+  }
+  .card.done .target-tag{ color: var(--success); }
+  .debt-name{
+    font-family:'Oswald', sans-serif; font-size: 18px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .debt-meta{ font-size: 11.5px; color: var(--text-faint); margin-top: 3px; }
+  .amounts{ text-align:right; display:flex; gap:16px; }
+  .amount-block{ text-align:right; }
+  .amount-label{
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-faint); font-weight: 600; margin-bottom: 3px;
+  }
+  .remaining{ font-family:'Oswald', sans-serif; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .card.done .remaining{ color: var(--success); }
+  .initial{ font-family:'Oswald', sans-serif; font-size: 15px; font-weight: 500; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+  .stamp{
+    position:absolute; top: 14px; right: 16px;
+    font-family:'Oswald', sans-serif; font-size: 11px; letter-spacing: 2px; font-weight: 700;
+    color: var(--success); border: 1.5px solid var(--success); padding: 3px 9px;
+    border-radius: 5px; transform: rotate(4deg); text-transform: uppercase;
+  }
+
+  .bar-outer{ width:100%; height: 7px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow:hidden; margin-bottom: 14px; }
+  .bar-inner{ height:100%; background: linear-gradient(90deg, var(--teal-deep), var(--gold)); transition: width 0.5s ease; }
+  .card.done .bar-inner{ background: var(--success); }
+
+  .pay-row{ display:flex; gap: 8px; align-items:stretch; }
+  .pay-row input{ flex:1; }
+  .btn-pay{
+    background: var(--teal); color: #eafff9; font-family:'Oswald', sans-serif; font-size: 12px;
+    letter-spacing: 1px; text-transform: uppercase; font-weight: 600; border: none;
+    border-radius: 8px; padding: 0 16px; cursor: pointer; white-space: nowrap;
+  }
+  .btn-pay:hover{ filter: brightness(1.1); }
+
+  .card-footer{ display:flex; justify-content: space-between; align-items:center; margin-top: 12px; flex-wrap: wrap; gap: 8px; }
+  .link-btn{ background:none; border:none; color: var(--text-faint); font-size: 11.5px; cursor:pointer; text-decoration: underline; padding: 0; }
+  .link-btn:hover{ color: var(--text-dim); }
+  .link-btn.danger:hover{ color: var(--danger); }
+
+  .history{ margin-top: 10px; display:none; }
+  .history.open{ display:block; }
+  .history-item{ display:flex; justify-content:space-between; font-size: 11.5px; color: var(--text-faint); padding: 5px 0; border-top: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+
+  .empty{ text-align:center; padding: 50px 20px; color: var(--text-faint); border: 1px dashed var(--border); border-radius: 14px; }
+  .empty-title{ font-family:'Oswald', sans-serif; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+
+  .toast{
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success);
+    font-family:'Oswald', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 13px;
+    font-weight: 600; padding: 12px 22px; border-radius: 10px; opacity: 0;
+    transition: all 0.35s ease; pointer-events: none; z-index: 50; text-align:center; max-width: 90vw;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  .footer-note{ text-align:center; color: var(--text-faint); font-size: 11.5px; margin-top: 36px; line-height: 1.6; }
+
+  /* FINANCE TAB */
+  .period-bar{ text-align:center; margin-bottom: 20px; }
+  .period-label{ font-family:'Oswald', sans-serif; font-size: 19px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .period-status{ font-size: 11px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px; font-weight: 600; }
+
+  .finance-columns{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 600px){ .finance-columns{ grid-template-columns: 1fr; } }
+  .finance-col{ background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+  .col-header{ font-family:'Oswald', sans-serif; font-size: 12.5px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .finance-col.income .col-header{ color: var(--success); }
+  .finance-col.expense .col-header{ color: var(--danger); }
+
+  .finance-item{ display:flex; justify-content:space-between; align-items:center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; gap: 8px; }
+  .finance-item:last-child{ border-bottom:none; }
+  .finance-item-name{ color: var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:6px; }
+  .finance-item-right{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .finance-item-amount{ font-variant-numeric: tabular-nums; font-weight:600; }
+  .finance-item-del{ background:none; border:none; color: var(--text-faint); cursor:pointer; font-size:17px; line-height:1; padding: 0; }
+  .finance-item-del:hover{ color: var(--danger); }
+  .mini-badge{
+    font-size: 8.5px; letter-spacing: 0.5px; text-transform:uppercase; font-weight:700;
+    padding: 2px 5px; border-radius: 4px; flex-shrink:0; font-family:'Oswald', sans-serif;
+  }
+  .mini-badge.recurent{ background: rgba(255,255,255,0.08); color: var(--text-dim); }
+  .mini-badge.vitala{ background: rgba(193,68,60,0.22); color: #e8837a; }
+  .mini-badge.necesara{ background: rgba(244,168,2,0.2); color: var(--gold); }
+  .mini-badge.confort{ background: rgba(10,122,106,0.28); color: #7fd8c9; }
+  .mini-badge.dorinta{ background: rgba(79,143,107,0.2); color: #85c19f; }
+
+  .finance-add{ display:flex; flex-wrap:wrap; gap:6px; margin-top: 12px; }
+  .finance-add input{ font-size: 13px; padding: 8px 10px; }
+  .finance-add input.fname{ flex: 1 1 100%; }
+  .finance-add input.famount{ flex:1; }
+  .finance-add select{ flex:1; font-size:12.5px; padding: 8px 6px; }
+  .finance-add button.faddbtn{
+    background: var(--teal); color:#eafff9; border:none; border-radius:8px;
+    width: 38px; flex-shrink:0; font-size: 18px; cursor:pointer;
+  }
+  .finance-add button.faddbtn:hover{ filter: brightness(1.1); }
+  .finance-add .checkbox-row{ flex: 1 1 100%; margin-top:2px; }
+
+  .category-totals{ display:flex; gap: 12px; margin-top: 10px; font-size: 11px; color: var(--text-faint); }
+
+  .finance-empty{ color: var(--text-faint); font-size: 12.5px; padding: 6px 0; text-align:center; }
+
+  .finalize-wrap{ text-align:center; margin: 4px 0 32px; }
+  #finalizeBtn{ width:100%; }
+
+  .month-row{ background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; }
+  .month-row-top{ display:flex; justify-content:space-between; align-items:center; gap: 10px; }
+  .month-row-label{ font-family:'Oswald', sans-serif; font-weight:600; font-size: 13.5px; text-transform: uppercase; letter-spacing:0.3px; }
+  .month-row-sold{ font-variant-numeric: tabular-nums; font-weight:700; font-family:'Oswald', sans-serif; }
+  .month-row-sold.pos{ color: var(--success); }
+  .month-row-sold.neg{ color: var(--danger); }
+  .month-detail{ display:none; margin-top:10px; padding-top:10px; border-top: 1px solid var(--border); font-size:12.5px; color: var(--text-dim); }
+  .month-detail.open{ display:block; }
+  .month-detail-row{ display:flex; justify-content:space-between; padding: 3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="header-text">
+      <div class="eyebrow">Centru de comandă financiar</div>
+      <h1>Datorii &amp; Bilanț lunar</h1>
+      <p class="subtitle">Persoanele fizice au prioritate, apoi bulgărele de zăpadă pe rest. Venituri și cheltuieli urmăresc ciclul tău de plată, din 15 până în 15.</p>
+    </div>
+    <div class="header-actions">
+      <button class="export-btn" id="exportBtn">⬇ Backup (JSON)</button>
+      <button class="export-btn" id="importBtn">⬆ Restaurează backup</button>
+      <input type="file" id="importInput" accept="application/json" style="display:none;">
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="debts">Planul de atac al datoriilor</button>
+    <button class="tab-btn" data-tab="finance">Venituri &amp; cheltuieli lunare</button>
+  </div>
+
+  <!-- ===================== TAB 1: DEBTS ===================== -->
+  <section id="tab-debts" class="tab-panel active">
+
+    <div class="overview">
+      <div class="overview-grid">
+        <div>
+          <div class="stat-label">Total inițial</div>
+          <div class="stat-value" id="statInitial">0 RON</div>
+        </div>
+        <div>
+          <div class="stat-label">Rămas de plată</div>
+          <div class="stat-value gold" id="statRemaining">0 RON</div>
+        </div>
+        <div>
+          <div class="stat-label">Plătit până acum</div>
+          <div class="stat-value success" id="statPaid">0 RON</div>
+        </div>
+      </div>
+      <div class="progress-outer"><div class="progress-inner" id="overallBar"></div></div>
+      <div class="progress-caption">
+        <span id="progressPct">0% eliminat</span>
+        <span id="progressCount">0 din 0 finalizate</span>
+      </div>
+    </div>
+
+    <div class="linked-box">
+      <div class="linked-box-text">Sold disponibil în perioada curentă (din tabul Venituri &amp; Cheltuieli): <b id="linkedSoldText">0 RON</b></div>
+      <button id="useLinkedSold">Folosește în calculator</button>
+    </div>
+
+    <div class="calc-panel">
+      <div class="calc-title">Calculator alocare lunară</div>
+      <div class="calc-sub">Introdu cât ai disponibil luna asta pentru datorii. Restul, după ratele minime, merge integral pe prima țintă activă.</div>
+      <div class="calc-row">
+        <input type="number" id="calcAvailable" placeholder="Sumă disponibilă (RON)" min="0" step="1">
+        <button class="btn btn-primary" id="calcBtn">Calculează</button>
+      </div>
+      <div class="calc-results" id="calcResults"></div>
+    </div>
+
+    <button class="add-toggle" id="addToggle">+ Adaugă o datorie nouă</button>
+
+    <div class="add-form" id="addForm">
+      <div class="add-form-title">Datorie nouă</div>
+      <div class="form-row">
+        <div>
+          <label>Nume datorie</label>
+          <input type="text" id="newName" placeholder="ex: Card credit BT">
+        </div>
+        <div>
+          <label>Sumă totală (RON)</label>
+          <input type="number" id="newAmount" placeholder="0" min="0" step="1">
+        </div>
+        <div>
+          <label>Rată min. lunară (RON)</label>
+          <input type="number" id="newMin" placeholder="0" min="0" step="1">
+        </div>
+        <div>
+          <label>Tip datorie</label>
+          <select id="newType">
+            <option value="persoana">Persoană fizică (prioritate)</option>
+            <option value="institutie">Instituție / Bancă</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" id="saveNew">Adaugă în listă</button>
+        <button class="btn btn-ghost" id="cancelNew">Anulează</button>
+      </div>
+    </div>
+
+    <div id="debtList"></div>
+
+    <p class="footer-note">Datele se salvează direct pe acest telefon/browser (nu în cloud) — folosește „Backup" regulat ca să nu le pierzi dacă schimbi telefonul sau ștergi cache-ul.<br>Fiecare plată introdusă se scade din suma rămasă a datoriei respective.</p>
+  </section>
+
+  <!-- ===================== TAB 2: FINANCE ===================== -->
+  <section id="tab-finance" class="tab-panel">
+
+    <div class="period-bar">
+      <div class="period-label" id="periodLabel">—</div>
+      <div class="period-status" id="periodStatus">—</div>
+    </div>
+
+    <div class="overview">
+      <div class="overview-grid">
+        <div>
+          <div class="stat-label">Total venituri</div>
+          <div class="stat-value success" id="financeIncomeTotal">0 RON</div>
+        </div>
+        <div>
+          <div class="stat-label">Total cheltuieli</div>
+          <div class="stat-value danger-text" id="financeExpenseTotal">0 RON</div>
+        </div>
+        <div>
+          <div class="stat-label">Sold rămas</div>
+          <div class="stat-value gold" id="financeSold">0 RON</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finance-columns">
+      <div class="finance-col income">
+        <div class="col-header">Venituri</div>
+        <div class="finance-list" id="incomeList"></div>
+        <div class="finance-add">
+          <input type="text" class="fname" id="newIncomeName" placeholder="Sursă (ex: Salariu)">
+          <input type="number" class="famount" id="newIncomeAmount" placeholder="RON" min="0" step="1">
+          <button class="faddbtn" id="addIncomeBtn">+</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="newIncomeRecurring">
+            <label for="newIncomeRecurring">Recurent — apare automat și luna viitoare</label>
+          </div>
+        </div>
+      </div>
+      <div class="finance-col expense">
+        <div class="col-header">Cheltuieli</div>
+        <div class="finance-list" id="expenseList"></div>
+        <div class="finance-add">
+          <input type="text" class="fname" id="newExpenseName" placeholder="Cheltuială (ex: Chirie)">
+          <input type="number" class="famount" id="newExpenseAmount" placeholder="RON" min="0" step="1">
+          <select id="newExpensePriority">
+            <option value="vitala">Vitală</option>
+            <option value="necesara">Necesară</option>
+            <option value="confort">Confort</option>
+            <option value="dorinta">Dorință</option>
+          </select>
+          <button class="faddbtn" id="addExpenseBtn">+</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="newExpenseRecurring">
+            <label for="newExpenseRecurring">Recurentă — apare automat și luna viitoare</label>
+          </div>
+        </div>
+        <div class="category-totals" id="categoryTotals"></div>
+      </div>
+    </div>
+
+    <div class="finalize-wrap">
+      <button class="btn btn-primary" id="finalizeBtn">Finalizează și salvează luna</button>
+    </div>
+
+    <div class="list-label" id="historyLabel" style="display:none;">Istoric luni închise</div>
+    <div id="historyMonths"></div>
+
+    <p class="footer-note">Perioada rulează din 15 într-o lună până pe 14 în luna următoare, sincronizată cu ziua de salariu.<br>Elementele „recurente" se copiază automat în perioada nouă. „Finalizează și salvează luna" arhivează perioada curentă.</p>
+  </section>
+
+</div>
+
+<div class="toast" id="toast">Țintă eliminată — datorie finalizată</div>
+
+<script>
+/* ============ SHARED HELPERS ============ */
+function fmt(n){ return Math.round(n).toLocaleString('ro-RO') + ' RON'; }
+function uid(){ return 'x' + Date.now() + Math.random().toString(16).slice(2,8); }
+function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+function todayStr(){ return new Date().toLocaleDateString('ro-RO', {day:'2-digit', month:'2-digit', year:'numeric'}); }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ============ LOCAL STORAGE WRAPPER ============ */
+/* Works standalone on a phone (no Claude backend needed). Same async shape as window.storage. */
+async function storageGet(key){
+  try{
+    const v = localStorage.getItem(key);
+    return v !== null ? { value: v } : null;
+  }catch(e){
+    console.error('Nu pot citi din localStorage', e);
+    return null;
+  }
+}
+async function storageSet(key, value){
+  try{
+    localStorage.setItem(key, value);
+    return { value };
+  }catch(e){
+    console.error('Nu pot scrie în localStorage', e);
+    return null;
+  }
+}
+
+/* ============ TABS ============ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.getAttribute('data-tab')).classList.add('active');
+  };
+});
+
+/* ============ EXPORT / BACKUP ============ */
+document.getElementById('exportBtn').onclick = () => {
+  const payload = { debts, financePeriods: periods, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'backup-financiar-' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Backup descărcat');
+};
+
+let pendingImport = false;
+document.getElementById('importBtn').onclick = () => {
+  const btn = document.getElementById('importBtn');
+  if(!pendingImport){
+    pendingImport = true;
+    btn.textContent = 'Sigur? Suprascrie tot — apasă din nou';
+    setTimeout(()=>{ pendingImport = false; btn.textContent = '⬆ Restaurează backup'; }, 4000);
+    return;
+  }
+  pendingImport = false;
+  btn.textContent = '⬆ Restaurează backup';
+  document.getElementById('importInput').click();
+};
+document.getElementById('importInput').onchange = async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const payload = JSON.parse(text);
+    if(Array.isArray(payload.debts)) debts = payload.debts;
+    if(Array.isArray(payload.financePeriods)) periods = payload.financePeriods;
+    await save();
+    await saveFinance();
+    render();
+    renderFinance();
+    showToast('Backup restaurat cu succes');
+  }catch(err){
+    alert('Fișierul nu pare un backup valid.');
+  }
+  e.target.value = '';
+};
+
+/* ============ DEBTS TAB ============ */
+const STORAGE_KEY = 'debts-v1';
+let debts = [];
+
+async function load(){
+  try{
+    const res = await storageGet(STORAGE_KEY);
+    debts = res && res.value ? JSON.parse(res.value) : [];
+  }catch(e){
+    debts = [];
+  }
+  render();
+}
+
+async function save(){
+  try{ await storageSet(STORAGE_KEY, JSON.stringify(debts)); }
+  catch(e){ console.error('Eroare la salvare', e); }
+}
+
+function groupDebts(){
+  const active = debts.filter(d => !d.finalizedAt);
+  const done = debts.filter(d => d.finalizedAt).sort((a,b) => b.finalizedAt - a.finalizedAt);
+  const persons = active.filter(d => d.type === 'persoana').sort((a,b) => b.remaining - a.remaining);
+  const institutions = active.filter(d => d.type !== 'persoana').sort((a,b) => b.remaining - a.remaining);
+  return { persons, institutions, done };
+}
+
+function activeOrderForAllocation(){
+  const { persons, institutions } = groupDebts();
+  return [...persons, ...institutions];
+}
+
+function render(){
+  const { persons, institutions, done } = groupDebts();
+  const allActive = [...persons, ...institutions];
+  const allDebts = [...allActive, ...done];
+
+  const initial = allDebts.reduce((s,d) => s + d.initialAmount, 0);
+  const remaining = allDebts.reduce((s,d) => s + d.remaining, 0);
+  const paid = initial - remaining;
+  const pct = initial > 0 ? Math.round((paid/initial)*100) : 0;
+
+  document.getElementById('statInitial').textContent = fmt(initial);
+  document.getElementById('statRemaining').textContent = fmt(remaining);
+  document.getElementById('statPaid').textContent = fmt(paid);
+  document.getElementById('overallBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '% eliminat';
+  document.getElementById('progressCount').textContent = done.length + ' din ' + allDebts.length + ' finalizate';
+
+  const list = document.getElementById('debtList');
+  list.innerHTML = '';
+
+  if(allDebts.length === 0){
+    list.innerHTML = '<div class="empty"><div class="empty-title">Nicio datorie adăugată încă</div><div>Apasă „Adaugă o datorie nouă" ca să începi planul.</div></div>';
+    render_calc_available();
+    return;
+  }
+
+  function renderCard(d, label){
+    const isDone = !!d.finalizedAt;
+    const progressPct = d.initialAmount > 0 ? Math.min(100, Math.round(((d.initialAmount - d.remaining)/d.initialAmount)*100)) : 0;
+    const card = document.createElement('div');
+    card.className = 'card' + (isDone ? ' done' : (' type-' + (d.type || 'institutie')));
+    card.innerHTML = `
+      ${isDone ? '<div class="stamp">Finalizat</div>' : ''}
+      <div class="card-top">
+        <div>
+          <div class="target-tag">${isDone ? 'Țintă eliminată' : label}</div>
+          <div class="debt-name">${escapeHtml(d.name)}</div>
+          ${d.minPayment ? `<div class="debt-meta">Rată minimă: ${fmt(d.minPayment)}/lună</div>` : ''}
+        </div>
+        <div class="amounts">
+          <div class="amount-block">
+            <div class="amount-label">Sold rămas</div>
+            <div class="remaining">${fmt(d.remaining)}</div>
+          </div>
+          <div class="amount-block">
+            <div class="amount-label">Sold inițial</div>
+            <div class="initial">${fmt(d.initialAmount)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="bar-outer"><div class="bar-inner" style="width:${progressPct}%"></div></div>
+      ${!isDone ? `
+      <div class="pay-row">
+        <input type="number" min="0" step="1" placeholder="Sumă plătită acum (RON)" data-pay-input="${d.id}">
+        <button class="btn-pay" data-pay-btn="${d.id}">Adaugă plată</button>
+      </div>` : ''}
+      <div class="card-footer">
+        <button class="link-btn" data-toggle-history="${d.id}">${d.payments && d.payments.length ? 'Istoric plăți (' + d.payments.length + ')' : 'Fără plăți încă'}</button>
+        <button class="link-btn danger" data-delete="${d.id}">Șterge</button>
+        <button class="link-btn danger" data-delete-confirm="${d.id}" style="display:none;">Sigur? Apasă din nou</button>
+      </div>
+      <div class="history" data-history-panel="${d.id}">
+        ${(d.payments||[]).slice().reverse().map(p => `<div class="history-item"><span>${p.date}</span><span>-${fmt(p.amount)}</span></div>`).join('')}
+      </div>
+    `;
+    list.appendChild(card);
+  }
+
+  if(persons.length){
+    const h = document.createElement('div');
+    h.className = 'list-label gold-label';
+    h.textContent = 'Persoane fizice — prioritate maximă';
+    list.appendChild(h);
+    persons.forEach((d, idx) => renderCard(d, 'Prioritate ' + String(idx+1).padStart(2,'0')));
+  }
+
+  if(institutions.length){
+    const h = document.createElement('div');
+    h.className = 'list-label';
+    h.textContent = 'Instituții & bănci — bulgăre de zăpadă';
+    list.appendChild(h);
+    institutions.forEach((d, idx) => renderCard(d, 'Ținta ' + String(idx+1).padStart(2,'0')));
+  }
+
+  if(done.length){
+    const h = document.createElement('div');
+    h.className = 'list-label';
+    h.textContent = 'Finalizate';
+    list.appendChild(h);
+    done.forEach(d => renderCard(d, ''));
+  }
+
+  attachListeners();
+  render_calc_available();
+}
+
+function attachListeners(){
+  document.querySelectorAll('[data-pay-btn]').forEach(btn => {
+    btn.onclick = () => addPayment(btn.getAttribute('data-pay-btn'));
+  });
+  document.querySelectorAll('[data-pay-input]').forEach(inp => {
+    inp.onkeydown = (e) => { if(e.key === 'Enter') addPayment(inp.getAttribute('data-pay-input')); };
+  });
+  document.querySelectorAll('[data-toggle-history]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.getAttribute('data-toggle-history');
+      const panel = document.querySelector(`[data-history-panel="${id}"]`);
+      if(panel) panel.classList.toggle('open');
+    };
+  });
+  document.querySelectorAll('[data-delete]').forEach(btn => {
+    btn.onclick = () => {
+      btn.style.display = 'none';
+      const confirmBtn = document.querySelector(`[data-delete-confirm="${btn.getAttribute('data-delete')}"]`);
+      if(confirmBtn) confirmBtn.style.display = 'inline';
+    };
+  });
+  document.querySelectorAll('[data-delete-confirm]').forEach(btn => {
+    btn.onclick = () => deleteDebt(btn.getAttribute('data-delete-confirm'));
+  });
+}
+
+async function applyPaymentToDebt(debt, amount){
+  debt.remaining = Math.max(0, debt.remaining - amount);
+  if(!debt.payments) debt.payments = [];
+  debt.payments.push({ amount, date: todayStr() });
+  let justFinished = false;
+  if(debt.remaining === 0 && !debt.finalizedAt){
+    debt.finalizedAt = Date.now();
+    justFinished = true;
+  }
+  return justFinished;
+}
+
+async function addPayment(id){
+  const input = document.querySelector(`[data-pay-input="${id}"]`);
+  const val = parseFloat(input.value);
+  if(!val || val <= 0) return;
+  const debt = debts.find(d => d.id === id);
+  if(!debt) return;
+
+  const justFinished = await applyPaymentToDebt(debt, val);
+  await save();
+  render();
+  if(justFinished) showToast('Țintă eliminată — ' + debt.name + ' e finalizată!');
+}
+
+async function deleteDebt(id){
+  debts = debts.filter(d => d.id !== id);
+  await save();
+  render();
+}
+
+const addToggle = document.getElementById('addToggle');
+const addForm = document.getElementById('addForm');
+addToggle.onclick = () => {
+  addForm.classList.add('open');
+  addToggle.style.display = 'none';
+  document.getElementById('newName').focus();
+};
+document.getElementById('cancelNew').onclick = () => {
+  addForm.classList.remove('open');
+  addToggle.style.display = 'block';
+  document.getElementById('newName').value = '';
+  document.getElementById('newAmount').value = '';
+  document.getElementById('newMin').value = '';
+  document.getElementById('newType').value = 'persoana';
+};
+document.getElementById('saveNew').onclick = async () => {
+  const name = document.getElementById('newName').value.trim();
+  const amount = parseFloat(document.getElementById('newAmount').value);
+  const min = parseFloat(document.getElementById('newMin').value) || 0;
+  const type = document.getElementById('newType').value;
+
+  if(!name || !amount || amount <= 0){
+    alert('Completează numele și suma totală a datoriei.');
+    return;
+  }
+
+  debts.push({
+    id: uid(), name, initialAmount: amount, remaining: amount,
+    minPayment: min, type, payments: [], finalizedAt: null
+  });
+
+  await save();
+  render();
+  document.getElementById('cancelNew').click();
+};
+
+/* ============ ALLOCATION CALCULATOR ============ */
+function computeAllocation(available){
+  const order = activeOrderForAllocation();
+  if(order.length === 0) return null;
+
+  const priority = order[0];
+  const rest = order.slice(1);
+
+  const minsSum = rest.reduce((s,d) => s + Math.min(d.minPayment || 0, d.remaining), 0);
+  const leftover = available - minsSum;
+
+  const allocations = [];
+  rest.forEach(d => {
+    const amt = Math.min(d.minPayment || 0, d.remaining);
+    if(amt > 0) allocations.push({ id: d.id, name: d.name, amount: amt, isPriority: false });
+  });
+
+  const priorityAmt = Math.max(0, Math.min(priority.remaining, (priority.minPayment || 0) + Math.max(0, leftover)));
+  if(priorityAmt > 0) allocations.unshift({ id: priority.id, name: priority.name, amount: priorityAmt, isPriority: true });
+
+  return { allocations, leftover, minsSum, priority };
+}
+
+function render_calc_available(){
+  // keeps calculator results in sync if debts changed after a calculation
+}
+
+document.getElementById('calcBtn').onclick = () => {
+  const val = parseFloat(document.getElementById('calcAvailable').value);
+  const resultsEl = document.getElementById('calcResults');
+  if(!val || val <= 0){
+    resultsEl.innerHTML = '<div class="calc-empty">Introdu o sumă disponibilă mai mare ca 0.</div>';
+    return;
+  }
+  const result = computeAllocation(val);
+  if(!result || result.allocations.length === 0){
+    resultsEl.innerHTML = '<div class="calc-empty">Nicio datorie activă de alocat — felicitări!</div>';
+    return;
+  }
+
+  let html = result.allocations.map(a => `
+    <div class="calc-item ${a.isPriority ? 'priority' : ''}">
+      <div class="calc-item-name">${a.isPriority ? '<span class="calc-item-tag">Prioritate</span>' : ''}${escapeHtml(a.name)}</div>
+      <div class="calc-item-amount">${fmt(a.amount)}</div>
+    </div>
+  `).join('');
+
+  if(result.leftover < 0){
+    html += `<div class="calc-warning">Atenție: suma disponibilă e mai mică decât ratele minime totale (${fmt(result.minsSum)}). Ajustează sau prioritizează.</div>`;
+  }
+
+  html += `<button class="btn btn-primary calc-apply" id="applyAllocBtn">Aplică plățile sugerate</button>`;
+  resultsEl.innerHTML = html;
+
+  document.getElementById('applyAllocBtn').onclick = async () => {
+    for(const a of result.allocations){
+      const debt = debts.find(d => d.id === a.id);
+      if(!debt) continue;
+      await applyPaymentToDebt(debt, a.amount);
+    }
+    await save();
+    render();
+    resultsEl.innerHTML = '';
+    document.getElementById('calcAvailable').value = '';
+    showToast('Plăți aplicate conform planului de alocare');
+  };
+};
+
+document.getElementById('useLinkedSold').onclick = () => {
+  const sold = getCurrentSold();
+  document.getElementById('calcAvailable').value = sold > 0 ? Math.round(sold) : 0;
+  document.getElementById('calcBtn').click();
+};
+
+/* ============ FINANCE TAB (15 -> 15 cycle) ============ */
+const FINANCE_KEY = 'finance-periods-v1';
+let periods = [];
+const MONTHS_RO = ['Ian','Feb','Mar','Apr','Mai','Iun','Iul','Aug','Sep','Oct','Noi','Dec'];
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function computeCurrentPeriod(){
+  const now = new Date();
+  const day = now.getDate();
+  let start, end;
+  if(day >= 15){
+    start = new Date(now.getFullYear(), now.getMonth(), 15);
+    end = new Date(now.getFullYear(), now.getMonth()+1, 14);
+  } else {
+    start = new Date(now.getFullYear(), now.getMonth()-1, 15);
+    end = new Date(now.getFullYear(), now.getMonth(), 14);
+  }
+  const id = `${start.getFullYear()}-${pad(start.getMonth()+1)}-${pad(start.getDate())}`;
+  const label = `${start.getDate()} ${MONTHS_RO[start.getMonth()]} – ${end.getDate()} ${MONTHS_RO[end.getMonth()]} ${end.getFullYear()}`;
+  return { id, label };
+}
+
+function getPreviousPeriod(excludeId){
+  const past = periods.filter(p => p.id !== excludeId).sort((a,b) => b.id.localeCompare(a.id));
+  return past[0] || null;
+}
+
+async function loadFinance(){
+  try{
+    const res = await storageGet(FINANCE_KEY);
+    periods = res && res.value ? JSON.parse(res.value) : [];
+  }catch(e){
+    periods = [];
+  }
+
+  const cur = computeCurrentPeriod();
+  let active = periods.find(p => p.id === cur.id);
+  if(!active){
+    const prev = getPreviousPeriod(cur.id);
+    const incomes = prev ? prev.incomes.filter(i => i.recurring).map(i => ({ id: uid(), name: i.name, amount: i.amount, recurring: true })) : [];
+    const expenses = prev ? prev.expenses.filter(e => e.recurring).map(e => ({ id: uid(), name: e.name, amount: e.amount, recurring: true, priority: e.priority || 'necesara' })) : [];
+    active = { id: cur.id, label: cur.label, incomes, expenses, finalized: false, finalizedAt: null };
+    periods.push(active);
+    await saveFinance();
+  }
+  renderFinance();
+}
+
+async function saveFinance(){
+  try{ await storageSet(FINANCE_KEY, JSON.stringify(periods)); }
+  catch(e){ console.error('Eroare la salvare', e); }
+}
+
+function getActivePeriod(){
+  const cur = computeCurrentPeriod();
+  return periods.find(p => p.id === cur.id);
+}
+
+function getCurrentSold(){
+  const active = getActivePeriod();
+  if(!active) return 0;
+  const ti = active.incomes.reduce((s,i)=>s+i.amount,0);
+  const te = active.expenses.reduce((s,e)=>s+e.amount,0);
+  return ti - te;
+}
+
+function updateLinkedBox(){
+  const el = document.getElementById('linkedSoldText');
+  if(el) el.textContent = fmt(getCurrentSold());
+}
+
+function renderFinance(){
+  const active = getActivePeriod();
+  if(!active) return;
+
+  document.getElementById('periodLabel').textContent = active.label;
+  document.getElementById('periodStatus').textContent = active.finalized ? 'Perioadă finalizată' : 'Perioadă activă — se încasează pe 15';
+
+  const totalIncome = active.incomes.reduce((s,i)=>s+i.amount,0);
+  const totalExpense = active.expenses.reduce((s,e)=>s+e.amount,0);
+  const sold = totalIncome - totalExpense;
+
+  document.getElementById('financeIncomeTotal').textContent = fmt(totalIncome);
+  document.getElementById('financeExpenseTotal').textContent = fmt(totalExpense);
+  const soldEl = document.getElementById('financeSold');
+  soldEl.textContent = fmt(sold);
+  soldEl.className = 'stat-value ' + (sold >= 0 ? 'success' : 'danger-text');
+
+  const incomeList = document.getElementById('incomeList');
+  incomeList.innerHTML = active.incomes.length ? active.incomes.map(i => `
+    <div class="finance-item">
+      <span class="finance-item-name">${escapeHtml(i.name)}${i.recurring ? '<span class="mini-badge recurent">Recurent</span>' : ''}</span>
+      <span class="finance-item-right">
+        <span class="finance-item-amount">${fmt(i.amount)}</span>
+        ${!active.finalized ? `<button class="finance-item-del" data-del-income="${i.id}">×</button>` : ''}
+      </span>
+    </div>`).join('') : '<div class="finance-empty">Niciun venit adăugat</div>';
+
+  const priorityLabel = { vitala: 'Vitală', necesara: 'Necesară', confort: 'Confort', dorinta: 'Dorință' };
+  const expenseList = document.getElementById('expenseList');
+  expenseList.innerHTML = active.expenses.length ? active.expenses.map(e => `
+    <div class="finance-item">
+      <span class="finance-item-name">${escapeHtml(e.name)}<span class="mini-badge ${e.priority || 'necesara'}">${priorityLabel[e.priority] || 'Necesară'}</span>${e.recurring ? '<span class="mini-badge recurent">Recurent</span>' : ''}</span>
+      <span class="finance-item-right">
+        <span class="finance-item-amount">${fmt(e.amount)}</span>
+        ${!active.finalized ? `<button class="finance-item-del" data-del-expense="${e.id}">×</button>` : ''}
+      </span>
+    </div>`).join('') : '<div class="finance-empty">Nicio cheltuială adăugată</div>';
+
+  const vitalaTotal = active.expenses.filter(e => e.priority === 'vitala').reduce((s,e)=>s+e.amount,0);
+  const necesaraTotal = active.expenses.filter(e => (e.priority || 'necesara') === 'necesara').reduce((s,e)=>s+e.amount,0);
+  const confortTotal = active.expenses.filter(e => e.priority === 'confort').reduce((s,e)=>s+e.amount,0);
+  const dorintaTotal = active.expenses.filter(e => e.priority === 'dorinta').reduce((s,e)=>s+e.amount,0);
+  document.getElementById('categoryTotals').innerHTML = active.expenses.length
+    ? `<span>Vitală: ${fmt(vitalaTotal)}</span><span>Necesară: ${fmt(necesaraTotal)}</span><span>Confort: ${fmt(confortTotal)}</span><span>Dorință: ${fmt(dorintaTotal)}</span>`
+    : '';
+
+  const finalizeBtn = document.getElementById('finalizeBtn');
+  const addRows = document.querySelectorAll('.finance-add');
+  if(active.finalized){
+    finalizeBtn.style.display = 'none';
+    addRows.forEach(r => r.style.display = 'none');
+  } else {
+    finalizeBtn.style.display = 'inline-block';
+    finalizeBtn.textContent = 'Finalizează și salvează luna';
+    addRows.forEach(r => r.style.display = 'flex');
+  }
+
+  attachFinanceListeners();
+  renderHistory();
+  updateLinkedBox();
+}
+
+function attachFinanceListeners(){
+  document.querySelectorAll('[data-del-income]').forEach(btn=>{
+    btn.onclick = () => removeIncome(btn.getAttribute('data-del-income'));
+  });
+  document.querySelectorAll('[data-del-expense]').forEach(btn=>{
+    btn.onclick = () => removeExpense(btn.getAttribute('data-del-expense'));
+  });
+}
+
+async function removeIncome(id){
+  const active = getActivePeriod();
+  active.incomes = active.incomes.filter(i => i.id !== id);
+  await saveFinance();
+  renderFinance();
+}
+async function removeExpense(id){
+  const active = getActivePeriod();
+  active.expenses = active.expenses.filter(e => e.id !== id);
+  await saveFinance();
+  renderFinance();
+}
+
+document.getElementById('addIncomeBtn').onclick = async () => {
+  const nameEl = document.getElementById('newIncomeName');
+  const amtEl = document.getElementById('newIncomeAmount');
+  const recEl = document.getElementById('newIncomeRecurring');
+  const name = nameEl.value.trim();
+  const amount = parseFloat(amtEl.value);
+  if(!name || !amount || amount <= 0) return;
+  const active = getActivePeriod();
+  active.incomes.push({ id: uid(), name, amount, recurring: recEl.checked });
+  await saveFinance();
+  nameEl.value = ''; amtEl.value = ''; recEl.checked = false;
+  renderFinance();
+  nameEl.focus();
+};
+
+document.getElementById('addExpenseBtn').onclick = async () => {
+  const nameEl = document.getElementById('newExpenseName');
+  const amtEl = document.getElementById('newExpenseAmount');
+  const prioEl = document.getElementById('newExpensePriority');
+  const recEl = document.getElementById('newExpenseRecurring');
+  const name = nameEl.value.trim();
+  const amount = parseFloat(amtEl.value);
+  if(!name || !amount || amount <= 0) return;
+  const active = getActivePeriod();
+  active.expenses.push({ id: uid(), name, amount, priority: prioEl.value, recurring: recEl.checked });
+  await saveFinance();
+  nameEl.value = ''; amtEl.value = ''; recEl.checked = false;
+  renderFinance();
+  nameEl.focus();
+};
+
+['newIncomeName','newIncomeAmount'].forEach(id=>{
+  document.getElementById(id).addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('addIncomeBtn').click(); });
+});
+['newExpenseName','newExpenseAmount'].forEach(id=>{
+  document.getElementById(id).addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('addExpenseBtn').click(); });
+});
+
+let pendingFinalize = false;
+document.getElementById('finalizeBtn').onclick = async () => {
+  const btn = document.getElementById('finalizeBtn');
+  if(!pendingFinalize){
+    pendingFinalize = true;
+    btn.textContent = 'Sigur? Apasă din nou ca să închizi luna';
+    setTimeout(()=>{ pendingFinalize = false; btn.textContent = 'Finalizează și salvează luna'; }, 4000);
+    return;
+  }
+  pendingFinalize = false;
+  const active = getActivePeriod();
+  active.finalized = true;
+  active.finalizedAt = Date.now();
+  await saveFinance();
+  renderFinance();
+  showToast('Luna a fost salvată — perioadă nouă, activă din 15');
+};
+
+function renderHistory(){
+  const past = periods.filter(p => p.finalized).sort((a,b) => b.id.localeCompare(a.id));
+  const wrap = document.getElementById('historyMonths');
+  const label = document.getElementById('historyLabel');
+
+  if(!past.length){
+    wrap.innerHTML = '';
+    label.style.display = 'none';
+    return;
+  }
+  label.style.display = 'block';
+
+  wrap.innerHTML = past.map(p => {
+    const ti = p.incomes.reduce((s,i)=>s+i.amount,0);
+    const te = p.expenses.reduce((s,e)=>s+e.amount,0);
+    const sold = ti - te;
+    return `<div class="month-row" data-month-toggle="${p.id}">
+      <div class="month-row-top">
+        <div class="month-row-label">${p.label}</div>
+        <div class="month-row-sold ${sold>=0?'pos':'neg'}">${sold>=0?'+':''}${fmt(sold)}</div>
+      </div>
+      <div class="month-detail" data-month-detail="${p.id}">
+        <div class="month-detail-row"><span>Total venituri</span><span>${fmt(ti)}</span></div>
+        <div class="month-detail-row"><span>Total cheltuieli</span><span>${fmt(te)}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('[data-month-toggle]').forEach(row=>{
+    row.onclick = ()=>{
+      const id = row.getAttribute('data-month-toggle');
+      document.querySelector(`[data-month-detail="${id}"]`).classList.toggle('open');
+    };
+  });
+}
+
+/* ============ INIT ============ */
+(async () => {
+  await load();
+  await loadFinance();
+})();
+</script>
+</body>
+</html>
